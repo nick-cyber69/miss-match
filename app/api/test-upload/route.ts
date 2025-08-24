@@ -13,15 +13,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a unique filename
-    const filename = `test-${Date.now()}-${file.name}`;
+    console.log('Uploading file:', file.name, 'Size:', file.size);
 
     // Upload to Vercel Blob
-    const blob = await put(filename, file, {
+    const blob = await put(file.name, file, {
       access: 'public',
     });
 
-    // For now, just return the URL without saving to database
+    console.log('Upload successful:', blob.url);
+
     return NextResponse.json({
       success: true,
       url: blob.url,
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(
-      { success: false, error: 'Upload failed - check console for details' },
+      { success: false, error: 'Upload failed - check server logs' },
       { status: 500 }
     );
   }

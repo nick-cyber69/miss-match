@@ -23,4 +23,5 @@ model Upload {
   fileName  String
   type      String   // will be "USER_PHOTO" or "GARMENT"
   createdAt DateTime @default(now())
-}
+}crm -rf app
+cp -r src/app app

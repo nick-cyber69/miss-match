@@ -136,8 +136,6 @@ export default function HomePage() {
                   cursor: 'pointer',
                   transition: 'background-color 0.2s'
                 }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
               >
                 Continue to Garment Selection →
               </button>
@@ -157,11 +155,35 @@ export default function HomePage() {
             <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
               Choose a Garment
             </h3>
-            <p style={{ color: '#6b7280' }}>
-              Garment library coming soon! Your photo "{selectedFile?.name}" is ready.
+            <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
+              Your photo "{selectedFile?.name}" is ready! Garment library coming soon.
             </p>
+            
+            {/* Sample garments */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+              {['👕 T-Shirt', '👔 Dress Shirt', '👗 Dress', '🧥 Jacket'].map((garment, index) => (
+                <div key={index} style={{
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '1rem',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.2s'
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>
+                    {garment.split(' ')[0]}
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: '#374151' }}>
+                    {garment.split(' ').slice(1).join(' ')}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        <div style={{ marginTop: '3rem', fontSize: '0.875rem', color: '#6b7280' }}>
+          🔒 Your images are processed securely and automatically deleted after 30 days.
+        </div>
       </div>
     </div>
   );

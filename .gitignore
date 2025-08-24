@@ -1,7 +1,30 @@
+# Dependencies
 node_modules/
+
+# Next.js
 .next/
-.env*
-.vercel
-*.log
-.DS_Store
+out/
 dist/
+build/
+
+# Environment variables - VERY IMPORTANT!
+.env
+.env.local
+.env.production
+.env.development
+.env*.local
+
+# Vercel
+.vercel
+
+# OS files
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+prisma/*.db
+prisma/*.db-journal

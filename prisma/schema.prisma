@@ -15,3 +15,12 @@ model Garment {
   active      Boolean   @default(true)
   createdAt   DateTime  @default(now())
 }
+
+// New model for user photo uploads
+model Upload {
+  id        String   @id @default(cuid())
+  url       String
+  fileName  String
+  type      String   // will be "USER_PHOTO" or "GARMENT"
+  createdAt DateTime @default(now())
+}

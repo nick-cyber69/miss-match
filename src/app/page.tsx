@@ -14,31 +14,19 @@ export default function HomePage() {
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <h1 style={{ 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          marginBottom: '1rem',
-          color: '#111827'
-        }}>
+      <div style={{ textAlign: 'center' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
           AI Virtual Try-On
         </h1>
-        <p style={{ 
-          fontSize: '1.25rem', 
-          color: '#6b7280',
-          marginBottom: '2rem'
-        }}>
+        <p style={{ fontSize: '1.25rem', color: '#6b7280', marginBottom: '2rem' }}>
           Upload your photo and see how any garment looks on you instantly.
         </p>
-        
         <div style={{
           backgroundColor: 'white',
           borderRadius: '12px',
           border: '1px solid #e5e7eb',
           padding: '2rem',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          maxWidth: '600px',
-          margin: '0 auto'
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
           <div style={{
             border: '2px dashed #d1d5db',
@@ -69,7 +57,7 @@ export default function HomePage() {
                   {selectedFile ? selectedFile.name : 'Click to upload your photo'}
                 </p>
                 <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                  JPEG, PNG, WebP supported • Max 10MB
+                  JPEG, PNG, WebP supported
                 </p>
               </div>
             </label>

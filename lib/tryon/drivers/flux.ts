@@ -42,15 +42,15 @@ export class FluxTryOnDriver implements TryOnDriver {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-key': this.apiKey  // Changed from x-api-key to x-key
+          'x-key': this.apiKey
         },
         body: JSON.stringify({
           prompt: kontextPrompt,
           width: 1024,
-          height: 1536,
+          height: 1024,  // Changed from 1536 to 1024 (max is 1440)
           model: 'flux-pro-1.1',
           steps: 50,
-          guidance: 7.5,
+          guidance: 3.5,  // Changed from 7.5 to 3.5 (max is 5)
           output_format: 'jpeg'
         })
       })

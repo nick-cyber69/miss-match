@@ -31,20 +31,56 @@ export default function Home() {
 
   const currentGarment = DEMO_GARMENTS[currentGarmentIndex]
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('File input changed, files:', e.target.files)
     const file = e.target.files?.[0]
     if (file) {
       console.log('File selected:', file.name, 'Size:', file.size)
       setSelectedFile(file)
-      setUploadedUrl(null) // Reset uploaded URL when new file selected
+      setUploadedUrl(null)
       setResultUrl(null)
+      
+      // Create preview
       const reader = new FileReader()
       reader.onloadend = () => {
         console.log('File preview created')
         setPreviewUrl(reader.result as string)
       }
       reader.readAsDataURL(file)
+      
+      // Start upload immediately
+      setIsUploading(true)
+      console.log('Starting automatic upload...')
+      
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        
+        console.log('Uploading file:', file.name, 'Size:', file.size)
+        
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+        
+        console.log('Response status:', response.status)
+        const data = await response.json()
+        console.log('Upload response:', data)
+        
+        if (data.success) {
+          setUploadedUrl(data.url)
+          console.log('File uploaded successfully to:', data.url)
+        } else {
+          console.error('Upload failed:', data.error)
+          alert(`Upload failed: ${data.error || 'Unknown error'}`)
+        }
+      } catch (error) {
+        console.error('Upload error caught:', error)
+        alert('Upload failed. Please check the console for details.')
+      } finally {
+        setIsUploading(false)
+        console.log('Upload process finished')
+      }
     } else {
       console.log('No file selected')
     }
@@ -252,26 +288,9 @@ export default function Home() {
         />
         
         {!uploadedUrl ? (
-          // Show Upload button if no file uploaded yet
+          // Show Choose Photo button or uploading status
           <button
-            onClick={async () => {
-              console.log('Button clicked, previewUrl exists:', !!previewUrl)
-              if (previewUrl && selectedFile) {
-                console.log('Have preview and file, uploading...')
-                await handleUpload()
-              } else if (previewUrl) {
-                // Have preview but lost file reference, try to re-get from input
-                const input = document.getElementById('file-input') as HTMLInputElement
-                if (input?.files?.[0]) {
-                  console.log('Re-getting file from input')
-                  setSelectedFile(input.files[0])
-                  await handleUpload()
-                }
-              } else {
-                console.log('No file, opening picker...')
-                document.getElementById('file-input')?.click()
-              }
-            }}
+            onClick={() => document.getElementById('file-input')?.click()}
             disabled={isUploading}
             style={{
               padding: '12px 50px',
@@ -284,49 +303,50 @@ export default function Home() {
               opacity: isUploading ? 0.5 : 1
             }}
           >
-            {isUploading ? 'Uploading...' : previewUrl ? 'Upload Photo' : 'Choose Photo'}
+            {isUploading ? 'Uploading...' : 'Choose Photo'}
           </button>
         ) : (
-          // Show Generate button after upload
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating}
-            style={{
-              padding: '12px 50px',
-              fontSize: '18px',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '30px',
-              cursor: isGenerating ? 'not-allowed' : 'pointer',
-              fontWeight: '500',
-              opacity: isGenerating ? 0.5 : 1
-            }}
-          >
-            {isGenerating ? 'Generating...' : 'Generate'}
-          </button>
-        )}
-        
-        {/* Change Photo button when photo is uploaded */}
-        {uploadedUrl && (
-          <button
-            onClick={() => {
-              setUploadedUrl(null)
-              setResultUrl(null)
-              document.getElementById('file-input')?.click()
-            }}
-            style={{
-              padding: '12px 30px',
-              fontSize: '18px',
-              backgroundColor: 'white',
-              border: '2px solid #333',
-              borderRadius: '30px',
-              cursor: 'pointer',
-              fontWeight: '500'
-            }}
-          >
-            Change Photo
-          </button>
+          <>
+            {/* Generate button after upload */}
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              style={{
+                padding: '12px 50px',
+                fontSize: '18px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '30px',
+                cursor: isGenerating ? 'not-allowed' : 'pointer',
+                fontWeight: '500',
+                opacity: isGenerating ? 0.5 : 1
+              }}
+            >
+              {isGenerating ? 'Generating...' : 'Generate'}
+            </button>
+            
+            {/* Change Photo button */}
+            <button
+              onClick={() => {
+                setUploadedUrl(null)
+                setResultUrl(null)
+                setPreviewUrl(null)
+                document.getElementById('file-input')?.click()
+              }}
+              style={{
+                padding: '12px 30px',
+                fontSize: '18px',
+                backgroundColor: 'white',
+                border: '2px solid #333',
+                borderRadius: '30px',
+                cursor: 'pointer',
+                fontWeight: '500'
+              }}
+            >
+              Change Photo
+            </button>
+          </>
         )}
       </div>
       

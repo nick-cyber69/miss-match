@@ -48,14 +48,21 @@ export default function Home() {
       const formData = new FormData()
       formData.append('file', selectedFile)
       
+      console.log('Uploading file:', selectedFile.name)
+      
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       })
       
       const data = await response.json()
+      console.log('Upload response:', data)
+      
       if (data.success) {
         setUploadedUrl(data.url)
+        console.log('File uploaded successfully to:', data.url)
+      } else {
+        alert(`Upload failed: ${data.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Upload failed:', error)

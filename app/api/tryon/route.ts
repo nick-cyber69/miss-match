@@ -6,22 +6,22 @@ import { getTryOnDriver } from '@/lib/tryon/drivers'
 const GARMENTS_DB = [
   {
     id: '1',
-    name: 'Yellow Plaid Blazer Dress',
-    imageUrl: '/garments/yellow-plaid.jpg',
-    category: 'dress' as const,
-    sku: 'YPB001'
+    name: 'White T-Shirt',
+    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=600&fit=crop',
+    category: 'top' as const,
+    sku: 'WT001'
   },
   {
     id: '2',
-    name: 'White T-Shirt',
-    imageUrl: '/garments/white-tshirt.jpg',
-    category: 'top' as const,
-    sku: 'WT002'
+    name: 'Black Dress',
+    imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop',
+    category: 'dress' as const,
+    sku: 'BD002'
   },
   {
     id: '3',
     name: 'Denim Jacket',
-    imageUrl: '/garments/denim-jacket.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1601333144130-8cbb312bdd55?w=400&h=600&fit=crop',
     category: 'top' as const,
     sku: 'DJ003'
   }

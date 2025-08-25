@@ -38,6 +38,7 @@ export class FluxTryOnDriver implements TryOnDriver {
       const requestBody = {
         prompt: kontextPrompt,
         input_image: input.originalImageUrl,  // The person's photo
+        input_image_2: input.garmentImageUrl,  // The garment as reference
         output_format: 'jpeg',
         safety_tolerance: 2
       }

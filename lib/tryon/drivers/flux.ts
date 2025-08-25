@@ -35,30 +35,34 @@ export class FluxTryOnDriver implements TryOnDriver {
       console.log('API Key present:', !!this.apiKey)
 
       // Step 1: Create the edit task using the correct Flux Kontext Pro endpoint
+      const requestBody = {
+        prompt: kontextPrompt,
+        input_image: input.originalImageUrl,  // The person's photo
+        output_format: 'jpeg',
+        safety_tolerance: 2
+      }
+      
+      console.log('Request body:', JSON.stringify(requestBody, null, 2))
+      
       const createResponse = await fetch(`${this.apiUrl}/v1/flux-kontext-pro`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-key': this.apiKey
         },
-        body: JSON.stringify({
-          prompt: kontextPrompt,
-          input_image: input.originalImageUrl,  // The person's photo
-          input_image_2: input.garmentImageUrl,  // The garment image as reference
-          output_format: 'jpeg',
-          safety_tolerance: 2
-        })
+        body: JSON.stringify(requestBody)
       })
-
+      
+      // Get the raw response text first
+      const responseText = await createResponse.text()
+      console.log('Raw API response:', createResponse.status, responseText)
+      
       if (!createResponse.ok) {
-        const errorText = await createResponse.text()
-        console.error('Flux API response:', createResponse.status, errorText)
-        
         // Try to parse as JSON if possible
-        let errorDetail = errorText
+        let errorDetail = responseText
         try {
-          const errorJson = JSON.parse(errorText)
-          errorDetail = errorJson.detail || errorJson.error || errorText
+          const errorJson = JSON.parse(responseText)
+          errorDetail = errorJson.detail || errorJson.error || responseText
         } catch (e) {
           // Not JSON, use raw text
         }
@@ -66,7 +70,13 @@ export class FluxTryOnDriver implements TryOnDriver {
         throw new Error(`Flux API error (${createResponse.status}): ${errorDetail}`)
       }
 
-      const createData = await createResponse.json()
+      // Parse the successful response
+      let createData
+      try {
+        createData = JSON.parse(responseText)
+      } catch (e) {
+        throw new Error('Failed to parse API response: ' + responseText)
+      }
       const taskId = createData.id
       const pollingUrl = createData.polling_url // Use the provided polling URL
 

@@ -2,6 +2,11 @@
 
 import { useState } from 'react'
 
+// Set the page title
+if (typeof document !== 'undefined') {
+  document.title = 'Miss Match - Virtual Fashion Try-On'
+}
+
 const DEMO_GARMENTS = [
   {
     id: '1',
@@ -41,20 +46,27 @@ export default function Home() {
   }
 
   const handleUpload = async () => {
-    if (!selectedFile) return
+    console.log('handleUpload called, selectedFile:', selectedFile)
+    if (!selectedFile) {
+      console.log('No file selected, returning')
+      return
+    }
     
     setIsUploading(true)
+    console.log('Starting upload...')
+    
     try {
       const formData = new FormData()
       formData.append('file', selectedFile)
       
-      console.log('Uploading file:', selectedFile.name)
+      console.log('Uploading file:', selectedFile.name, 'Size:', selectedFile.size)
       
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
       })
       
+      console.log('Response status:', response.status)
       const data = await response.json()
       console.log('Upload response:', data)
       
@@ -62,13 +74,15 @@ export default function Home() {
         setUploadedUrl(data.url)
         console.log('File uploaded successfully to:', data.url)
       } else {
+        console.error('Upload failed:', data.error)
         alert(`Upload failed: ${data.error || 'Unknown error'}`)
       }
     } catch (error) {
-      console.error('Upload failed:', error)
-      alert('Upload failed. Please try again.')
+      console.error('Upload error caught:', error)
+      alert('Upload failed. Please check the console for details.')
     } finally {
       setIsUploading(false)
+      console.log('Upload process finished')
     }
   }
 
@@ -235,13 +249,13 @@ export default function Home() {
         {!uploadedUrl ? (
           // Show Upload button if no file uploaded yet
           <button
-            onClick={() => {
+            onClick={async () => {
               console.log('Button clicked, selectedFile:', selectedFile)
               if (selectedFile) {
-                // If file is selected, upload it
-                handleUpload()
+                console.log('Calling handleUpload...')
+                await handleUpload()
               } else {
-                // If no file selected, open file picker
+                console.log('No file, opening picker...')
                 document.getElementById('file-input')?.click()
               }
             }}

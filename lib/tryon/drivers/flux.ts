@@ -34,8 +34,8 @@ export class FluxTryOnDriver implements TryOnDriver {
       console.log('Prompt:', kontextPrompt)
       console.log('API Key present:', !!this.apiKey)
 
-      // Step 1: Create the edit task using Kontext Pro endpoint
-      const createResponse = await fetch(`${this.apiUrl}/v1/kontext-pro`, {
+      // Step 1: Create the edit task using the correct Flux Kontext Pro endpoint
+      const createResponse = await fetch(`${this.apiUrl}/v1/flux-kontext-pro`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,10 +43,10 @@ export class FluxTryOnDriver implements TryOnDriver {
         },
         body: JSON.stringify({
           prompt: kontextPrompt,
-          image_url: input.originalImageUrl,  // The person's photo
-          control_image_url: input.garmentImageUrl,  // The garment image (optional)
+          input_image: input.originalImageUrl,  // The person's photo
+          input_image_2: input.garmentImageUrl,  // The garment image as reference
           output_format: 'jpeg',
-          guidance: 3.5
+          safety_tolerance: 2
         })
       })
 

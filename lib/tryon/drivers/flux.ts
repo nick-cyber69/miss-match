@@ -24,6 +24,9 @@ export class FluxTryOnDriver implements TryOnDriver {
         throw new Error('FLUX_API_KEY is not configured')
       }
 
+      // Generate the prompt based on garment type
+      const prompt = this.generatePrompt(input.garmentMeta)
+      
       // For Kontext, the image URL goes in the prompt with special syntax
       const kontextPrompt = `[img]${input.originalImageUrl}[/img] ${prompt}`
 

@@ -98,7 +98,7 @@ export default function Home() {
       backgroundColor: 'white',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      {/* Header */}
+      {/* Header - Centered Title Only */}
       <div style={{ textAlign: 'center', padding: '40px 0' }}>
         <h1 style={{ 
           fontSize: '48px', 
@@ -236,9 +236,12 @@ export default function Home() {
           // Show Upload button if no file uploaded yet
           <button
             onClick={() => {
-              if (selectedFile && !uploadedUrl) {
+              console.log('Button clicked, selectedFile:', selectedFile)
+              if (selectedFile) {
+                // If file is selected, upload it
                 handleUpload()
               } else {
+                // If no file selected, open file picker
                 document.getElementById('file-input')?.click()
               }
             }}

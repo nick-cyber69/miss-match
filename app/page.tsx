@@ -58,7 +58,7 @@ export default function Home() {
         
         console.log('Uploading file:', file.name, 'Size:', file.size)
         
-        const response = await fetch('/api/upload', {
+        const response = await fetch('/api/test-upload', {
           method: 'POST',
           body: formData
         })

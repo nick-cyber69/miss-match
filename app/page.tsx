@@ -32,16 +32,21 @@ export default function Home() {
   const currentGarment = DEMO_GARMENTS[currentGarmentIndex]
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('File input changed, files:', e.target.files)
     const file = e.target.files?.[0]
     if (file) {
+      console.log('File selected:', file.name, 'Size:', file.size)
       setSelectedFile(file)
       setUploadedUrl(null) // Reset uploaded URL when new file selected
       setResultUrl(null)
       const reader = new FileReader()
       reader.onloadend = () => {
+        console.log('File preview created')
         setPreviewUrl(reader.result as string)
       }
       reader.readAsDataURL(file)
+    } else {
+      console.log('No file selected')
     }
   }
 

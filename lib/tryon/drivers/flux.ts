@@ -13,6 +13,8 @@ export class FluxTryOnDriver implements TryOnDriver {
     
     if (!this.apiKey) {
       console.warn('FLUX_API_KEY not set - Flux driver will not work')
+    } else {
+      console.log('Flux API key loaded, first 10 chars:', this.apiKey.substring(0, 10))
     }
   }
 
@@ -32,20 +34,23 @@ export class FluxTryOnDriver implements TryOnDriver {
 
       console.log('Calling Flux Kontext API...')
       console.log('Prompt:', kontextPrompt)
+      console.log('API Key present:', !!this.apiKey)
+      console.log('API URL:', `${this.apiUrl}/v1/image`)
 
       // Step 1: Create the edit task
-      const createResponse = await fetch(`${this.apiUrl}/v1/flux-pro-1.1`, {
+      const createResponse = await fetch(`${this.apiUrl}/v1/image`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': this.apiKey
+          'x-key': this.apiKey  // Changed from x-api-key to x-key
         },
         body: JSON.stringify({
           prompt: kontextPrompt,
           width: 1024,
           height: 1536,
+          model: 'flux-pro-1.1',
           steps: 50,
-          guidance_scale: 7.5,
+          guidance: 7.5,
           output_format: 'jpeg'
         })
       })
@@ -72,7 +77,7 @@ export class FluxTryOnDriver implements TryOnDriver {
         const resultResponse = await fetch(`${this.apiUrl}/v1/get_result?id=${taskId}`, {
           method: 'GET',
           headers: {
-            'x-api-key': this.apiKey
+            'x-key': this.apiKey  // Changed from x-api-key to x-key
           }
         })
 

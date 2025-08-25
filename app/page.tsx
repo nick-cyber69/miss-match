@@ -131,12 +131,36 @@ export default function Home() {
     if (!uploadedUrl) return
     
     setIsGenerating(true)
-    // For now, just show the original image after a delay
-    // We'll connect the real API later
-    setTimeout(() => {
-      setResultUrl(previewUrl)
+    try {
+      console.log('Calling try-on API...')
+      
+      const response = await fetch('/api/tryon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          originalImageUrl: uploadedUrl,
+          garmentId: currentGarment.id
+        })
+      })
+      
+      const data = await response.json()
+      console.log('Try-on response:', data)
+      
+      if (response.ok && data.renderUrl) {
+        setResultUrl(data.renderUrl)
+        console.log('Try-on successful, provider:', data.provider)
+      } else {
+        console.error('Try-on failed:', data.error)
+        alert(`Try-on failed: ${data.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Try-on error:', error)
+      alert('Try-on failed. Please check the console.')
+    } finally {
       setIsGenerating(false)
-    }, 2000)
+    }
   }
 
   const previousGarment = () => {

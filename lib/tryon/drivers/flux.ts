@@ -53,7 +53,17 @@ export class FluxTryOnDriver implements TryOnDriver {
       if (!createResponse.ok) {
         const errorText = await createResponse.text()
         console.error('Flux API response:', createResponse.status, errorText)
-        throw new Error(`Flux API error (${createResponse.status}): ${errorText}`)
+        
+        // Try to parse as JSON if possible
+        let errorDetail = errorText
+        try {
+          const errorJson = JSON.parse(errorText)
+          errorDetail = errorJson.detail || errorJson.error || errorText
+        } catch (e) {
+          // Not JSON, use raw text
+        }
+        
+        throw new Error(`Flux API error (${createResponse.status}): ${errorDetail}`)
       }
 
       const createData = await createResponse.json()

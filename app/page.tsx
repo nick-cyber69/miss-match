@@ -28,6 +28,7 @@ export default function Home() {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [resultUrl, setResultUrl] = useState<string | null>(null)
+  const [fileReady, setFileReady] = useState(false) // Add this state
 
   const currentGarment = DEMO_GARMENTS[currentGarmentIndex]
 
@@ -37,6 +38,7 @@ export default function Home() {
     if (file) {
       console.log('File selected:', file.name, 'Size:', file.size)
       setSelectedFile(file)
+      setFileReady(true) // Mark file as ready
       setUploadedUrl(null) // Reset uploaded URL when new file selected
       setResultUrl(null)
       const reader = new FileReader()
@@ -47,6 +49,7 @@ export default function Home() {
       reader.readAsDataURL(file)
     } else {
       console.log('No file selected')
+      setFileReady(false)
     }
   }
 
@@ -255,12 +258,12 @@ export default function Home() {
           // Show Upload button if no file uploaded yet
           <button
             onClick={async () => {
-              console.log('Button clicked, selectedFile:', selectedFile)
-              if (selectedFile) {
+              console.log('Button clicked, fileReady:', fileReady, 'selectedFile:', selectedFile)
+              if (fileReady && selectedFile) {
                 console.log('Calling handleUpload...')
                 await handleUpload()
               } else {
-                console.log('No file, opening picker...')
+                console.log('No file ready, opening picker...')
                 document.getElementById('file-input')?.click()
               }
             }}
@@ -276,7 +279,7 @@ export default function Home() {
               opacity: isUploading ? 0.5 : 1
             }}
           >
-            {isUploading ? 'Uploading...' : selectedFile ? 'Upload Photo' : 'Choose Photo'}
+            {isUploading ? 'Uploading...' : fileReady ? 'Upload Photo' : 'Choose Photo'}
           </button>
         ) : (
           // Show Generate button after upload

@@ -26,31 +26,26 @@ export class FluxTryOnDriver implements TryOnDriver {
         throw new Error('FLUX_API_KEY is not configured')
       }
 
-      // Generate the prompt based on garment type
-      const prompt = this.generatePrompt(input.garmentMeta)
+      // For Kontext virtual try-on, we need a different prompt format
+      // Just describe what they should be wearing
+      const kontextPrompt = `A person wearing a ${input.garmentMeta?.name || 'garment'}`
       
-      // For Kontext, the image URL goes in the prompt with special syntax
-      const kontextPrompt = `[img]${input.originalImageUrl}[/img] ${prompt}`
-
       console.log('Calling Flux Kontext API...')
+      console.log('Original image:', input.originalImageUrl)
       console.log('Prompt:', kontextPrompt)
       console.log('API Key present:', !!this.apiKey)
-      console.log('API URL:', `${this.apiUrl}/v1/image`)
 
-      // Step 1: Create the edit task
-      const createResponse = await fetch(`${this.apiUrl}/v1/image`, {
+      // Step 1: Create the edit task using Redux for image editing
+      const createResponse = await fetch(`${this.apiUrl}/v1/redux`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-key': this.apiKey
         },
         body: JSON.stringify({
-          prompt: kontextPrompt,
-          width: 1024,
-          height: 1024,  // Changed from 1536 to 1024 (max is 1440)
-          model: 'flux-pro-1.1',
-          steps: 50,
-          guidance: 3.5,  // Changed from 7.5 to 3.5 (max is 5)
+          prompt: `Person wearing a ${input.garmentMeta?.name || 'white t-shirt'}`,
+          image_url: input.originalImageUrl,
+          guidance: 3.5,
           output_format: 'jpeg'
         })
       })

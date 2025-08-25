@@ -26,11 +26,12 @@ export class FluxTryOnDriver implements TryOnDriver {
         throw new Error('FLUX_API_KEY is not configured')
       }
 
-      // For Kontext virtual try-on, use a simple prompt describing the garment
-      const kontextPrompt = `Person wearing a ${input.garmentMeta?.name || 'white t-shirt'}`
+      // For Kontext virtual try-on, be very specific about keeping the same person
+      const kontextPrompt = `Keep the exact same person, face, and background. Only change their clothing to match the reference garment.`
       
       console.log('Calling Flux Kontext Pro API...')
       console.log('Original image:', input.originalImageUrl)
+      console.log('Garment reference:', input.garmentImageUrl)
       console.log('Prompt:', kontextPrompt)
       console.log('API Key present:', !!this.apiKey)
 
@@ -152,23 +153,22 @@ export class FluxTryOnDriver implements TryOnDriver {
     const category = garmentMeta?.category || 'top'
     const name = garmentMeta?.name || 'garment'
 
-    // Craft prompts that preserve the person and background
-    // while changing only the clothing
+    // Be VERY specific about keeping the same person
     switch (category) {
       case 'top':
-        return `Change only the person's top/shirt to a ${name}. Keep the exact same pose, face, hair, body shape, and background. Do not modify anything except the upper body clothing.`
+        return `The same person in the photo, but wearing a ${name} instead of their current top. Keep their exact face, body, pose, and background unchanged. Only change the clothing on their upper body.`
       
       case 'bottom':
-        return `Change only the person's pants/skirt to a ${name}. Keep the exact same pose, face, hair, body shape, and background. Do not modify anything except the lower body clothing.`
+        return `The same person in the photo, but wearing ${name} instead of their current bottom. Keep their exact face, body, pose, and background unchanged. Only change the clothing on their lower body.`
       
       case 'dress':
-        return `Replace the person's outfit with a ${name} dress. Keep the exact same pose, face, hair, body shape, and background. Only change the clothing to this dress.`
+        return `The same person in the photo, but wearing a ${name} instead of their current outfit. Keep their exact face, body, pose, and background unchanged. Only change their clothing to this dress.`
       
       case 'set':
-        return `Change the person's entire outfit to a ${name}. Keep the exact same pose, face, hair, body shape, and background. Only modify the clothing.`
+        return `The same person in the photo, but wearing ${name} instead of their current outfit. Keep their exact face, body, pose, and background unchanged. Only change their clothing.`
       
       default:
-        return `Change the person's clothing to a ${name}. Keep everything else exactly the same - pose, face, hair, body, and background. Only modify the clothing.`
+        return `The same person in the photo, but wearing ${name}. Keep their exact face, body, pose, and background unchanged. Only change their clothing.`
     }
   }
 }

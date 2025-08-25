@@ -24,32 +24,33 @@ export class FluxTryOnDriver implements TryOnDriver {
         throw new Error('FLUX_API_KEY is not configured')
       }
 
-      // Generate the prompt based on garment type
-      const prompt = this.generatePrompt(input.garmentMeta)
+      // For Kontext, the image URL goes in the prompt with special syntax
+      const kontextPrompt = `[img]${input.originalImageUrl}[/img] ${prompt}`
 
-      console.log('Calling Flux Kontext API with prompt:', prompt)
+      console.log('Calling Flux Kontext API...')
+      console.log('Prompt:', kontextPrompt)
 
       // Step 1: Create the edit task
-      const createResponse = await fetch(`${this.apiUrl}/v1/kontext-pro`, {
+      const createResponse = await fetch(`${this.apiUrl}/v1/flux-pro-1.1`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey
         },
         body: JSON.stringify({
-          prompt: prompt,
-          image_url: input.originalImageUrl,
+          prompt: kontextPrompt,
           width: 1024,
           height: 1536,
           steps: 50,
-          guidance: 7.5,
+          guidance_scale: 7.5,
           output_format: 'jpeg'
         })
       })
 
       if (!createResponse.ok) {
-        const error = await createResponse.text()
-        throw new Error(`Flux API error (${createResponse.status}): ${error}`)
+        const errorText = await createResponse.text()
+        console.error('Flux API response:', createResponse.status, errorText)
+        throw new Error(`Flux API error (${createResponse.status}): ${errorText}`)
       }
 
       const createData = await createResponse.json()

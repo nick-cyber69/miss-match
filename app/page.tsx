@@ -28,7 +28,6 @@ export default function Home() {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const [resultUrl, setResultUrl] = useState<string | null>(null)
-  const [fileReady, setFileReady] = useState(false) // Add this state
 
   const currentGarment = DEMO_GARMENTS[currentGarmentIndex]
 
@@ -38,7 +37,6 @@ export default function Home() {
     if (file) {
       console.log('File selected:', file.name, 'Size:', file.size)
       setSelectedFile(file)
-      setFileReady(true) // Mark file as ready
       setUploadedUrl(null) // Reset uploaded URL when new file selected
       setResultUrl(null)
       const reader = new FileReader()
@@ -49,7 +47,6 @@ export default function Home() {
       reader.readAsDataURL(file)
     } else {
       console.log('No file selected')
-      setFileReady(false)
     }
   }
 
@@ -258,12 +255,20 @@ export default function Home() {
           // Show Upload button if no file uploaded yet
           <button
             onClick={async () => {
-              console.log('Button clicked, fileReady:', fileReady, 'selectedFile:', selectedFile)
-              if (fileReady && selectedFile) {
-                console.log('Calling handleUpload...')
+              console.log('Button clicked, previewUrl exists:', !!previewUrl)
+              if (previewUrl && selectedFile) {
+                console.log('Have preview and file, uploading...')
                 await handleUpload()
+              } else if (previewUrl) {
+                // Have preview but lost file reference, try to re-get from input
+                const input = document.getElementById('file-input') as HTMLInputElement
+                if (input?.files?.[0]) {
+                  console.log('Re-getting file from input')
+                  setSelectedFile(input.files[0])
+                  await handleUpload()
+                }
               } else {
-                console.log('No file ready, opening picker...')
+                console.log('No file, opening picker...')
                 document.getElementById('file-input')?.click()
               }
             }}
@@ -279,7 +284,7 @@ export default function Home() {
               opacity: isUploading ? 0.5 : 1
             }}
           >
-            {isUploading ? 'Uploading...' : fileReady ? 'Upload Photo' : 'Choose Photo'}
+            {isUploading ? 'Uploading...' : previewUrl ? 'Upload Photo' : 'Choose Photo'}
           </button>
         ) : (
           // Show Generate button after upload

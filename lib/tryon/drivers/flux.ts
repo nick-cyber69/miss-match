@@ -68,10 +68,12 @@ export class FluxTryOnDriver implements TryOnDriver {
 
       const createData = await createResponse.json()
       const taskId = createData.id
+      const pollingUrl = createData.polling_url // Use the provided polling URL
 
       console.log('Task created:', taskId)
+      console.log('Polling URL:', pollingUrl)
 
-      // Step 2: Poll for the result
+      // Step 2: Poll for the result using the provided polling URL
       let resultUrl: string | null = null
       let attempts = 0
       const maxAttempts = 60 // 60 seconds max wait
@@ -79,10 +81,10 @@ export class FluxTryOnDriver implements TryOnDriver {
       while (!resultUrl && attempts < maxAttempts) {
         await new Promise(resolve => setTimeout(resolve, 1000)) // Wait 1 second
 
-        const resultResponse = await fetch(`${this.apiUrl}/v1/get_result?id=${taskId}`, {
+        const resultResponse = await fetch(pollingUrl, {
           method: 'GET',
           headers: {
-            'x-key': this.apiKey  // Changed from x-api-key to x-key
+            'x-key': this.apiKey
           }
         })
 
